@@ -32,6 +32,7 @@ res.send({
     moneda
 })
     } catch (error) {
+        console.log(error)
         return res.status(505).json({
             message: 'something goes wrong'
         })
