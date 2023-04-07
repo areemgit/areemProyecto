@@ -2,7 +2,7 @@ import {pool} from '../db.js'
 
 export const getMonedas = async (req , res) => {
     try {
-        const [result] = await pool.query('SELECT * FROM monedas')
+        const [result] = await pool.query('SELECT * FROM monedas WHERE status_m = 1')
     res.json(result)
     } catch (error) {
         return res.status(505).json({
@@ -12,13 +12,14 @@ export const getMonedas = async (req , res) => {
 }
 
 export const createMoneda = async (req, res) =>{
-    const {nombre, abreviacion} = req.body
+    const {nombre_m, abreviacion, status_m} = req.body
     try {
-        const [rows] = await pool.query('INSERT INTO monedas(nombre, abreviacion) VALUES (?, ?)', [nombre, abreviacion])
+        const [rows] = await pool.query('INSERT INTO monedas(nombre_m, abreviacion, status_m) VALUES (?, ?, ?)', [nombre_m, abreviacion, status_m])
 res.send({
     id: rows.insertId,
-    nombre,
+    nombre_m,
     abreviacion,
+    status_m
 })
     } catch (error) {
         return res.status(505).json({
@@ -30,7 +31,7 @@ res.send({
 export const getMoneda = async (req, res) =>{
     const id = req.params.id
     try {
-        const [rows] = await pool.query('SELECT * FROM monedas WHERE id = ?', [id])
+        const [rows] = await pool.query('SELECT * FROM monedas WHERE id = ? AND status_m = 1', [id])
     
     if (rows.length <= 0) return res.status(404).json({
         message: 'Moneda no encontrada'
@@ -46,7 +47,7 @@ export const getMoneda = async (req, res) =>{
 
 export const deleteMoneda = async (req, res)=> {
     try {
-        const [result] = await pool.query('DELETE FROM monedas WHERE id = ?', [req.params.id])
+        const [result] = await pool.query('UPDATE monedas SET status_m = 0 WHERE id = ?', [req.params.id])
 
     if (result.affectedRows <= 0) return res.status(404).json({
         message: 'Moneda no encontrada'
@@ -62,10 +63,10 @@ export const deleteMoneda = async (req, res)=> {
 
 export const updateMoneda = async(req, res) =>{
     const {id} = req.params
-    const {nombre, abreviacion} = req.body
+    const {nombre_m, abreviacion, status_m} = req.body
 
     try {
-        const [result] = await pool.query('UPDATE monedas SET nombre = ?, abreviacion = ? WHERE id = ?', [nombre, abreviacion, id])
+        const [result] = await pool.query('UPDATE monedas SET nombre_m = ?, abreviacion = ?, status_m = ? WHERE id = ?', [nombre_m, abreviacion, status_m, id])
 
     if(result.affectedRows === 0) return res.status(404).json({
         message : 'Moneda no encontrada'

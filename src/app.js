@@ -10,13 +10,21 @@ import deudasRoutes from './routes/deudas.routes.js'
 import loginRoutes from './routes/login.routes.js'
 import cors from 'cors';
 import cookieParser from "cookie-parser"
+import documentosRoutes from './routes/documentos.routes.js'
 
-const app = express()
+const app = express();
 
-app.use(express.json())
-app.use(cors())
-app.use(express.urlencoded({extended:true}))
+app.use(express.json());
+app.use(function (req, res, next) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    next();
+});
+app.use(express.urlencoded({extended:true}));
 app.use(cookieParser());
+app.use(express.static('./src/archivos'));
 
 app.use('/api', usuariosRoutes)
 app.use('/api', rolesRoutes)
@@ -27,11 +35,12 @@ app.use('/api', clientesRoutes)
 app.use('/api', pagosRoutes)
 app.use('/api', deudasRoutes)
 app.use('/api', loginRoutes)
+app.use('/api', documentosRoutes)
 
-app.use((req, res, next) =>{
+/* app.use((req, res, next) =>{
     res.status(404).json({
         message: 'endpoint not found'
     })
-})
+}) */
 
 export default app;
