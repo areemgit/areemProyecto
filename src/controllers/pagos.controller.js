@@ -2,7 +2,7 @@ import {pool} from '../db.js'
 
 export const getPagos = async (req , res) => {
     try {
-        const [result] = await pool.query('SELECT * FROM pagos INNER JOIN unidades_negocio ON pagos.unidad_negocio = unidades_negocio.id INNER JOIN usuarios ON pagos.usuario = usuarios.id_u INNER JOIN monedas ON pagos.moneda=monedas.id INNER JOIN formas_pago ON pagos.forma_pago = formas_pago.id ORDER BY fecha_sistema DESC;')
+        const [result] = await pool.query('SELECT * FROM pagos INNER JOIN unidades_negocio ON pagos.unidad_negocio = unidades_negocio.id INNER JOIN usuarios ON pagos.usuario = usuarios.id_u INNER JOIN monedas ON pagos.moneda=monedas.id INNER JOIN formas_pago ON pagos.forma_pago = formas_pago.id ORDER BY id_p DESC;')
     res.json(result)
     } catch (error) {
         return res.status(505).json({

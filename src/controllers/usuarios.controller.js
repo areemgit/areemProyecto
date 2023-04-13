@@ -85,3 +85,40 @@ export const updateUsuario = async(req, res) =>{
         })
     }
 }
+
+export const deletePass = async (req, res) =>{
+    const id = req.params.id
+    try {
+        const [rows] = await pool.query("UPDATE usuarios SET contrasenia = '' WHERE usuarios.id_u = ?", [id])
+    
+    if (rows.length <= 0) {
+        return res.status(404).json({
+        message: 'Usuario no encontrado'
+    })
+}
+    res.json(rows[0])
+    } catch (error) {
+        console.log(error)
+        return res.status(505).json({
+            message: 'something goes wrong'
+        })
+    }
+}
+
+export const createPass = async(req, res) =>{
+    const {id} = req.params
+    const {contrasenia} = req.body
+    let passHash = await pkg.hash(contrasenia, 8)
+    try {
+        const [result] = await pool.query('UPDATE usuarios SET contrasenia = ? WHERE id_u = ?', [passHash, id])
+
+    if(result.affectedRows === 0) return res.status(404).json({
+        message : 'usuario no encontrado'
+    })
+    res.json(204)
+    } catch (error) {
+        return res.status(505).json({
+            message: 'something goes wrong'
+        })
+    }
+}
