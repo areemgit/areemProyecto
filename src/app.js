@@ -25,6 +25,7 @@ app.use(function (req, res, next) {
 app.use(express.urlencoded({extended:true}));
 app.use(cookieParser());
 app.use(express.static('./src/archivos'));
+app.use(cors())
 
 app.use('/api', usuariosRoutes)
 app.use('/api', rolesRoutes)
